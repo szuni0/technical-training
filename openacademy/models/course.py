@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models
+from odoo import fields, models,api
+from odoo.exceptions import ValidationError, Warning
 
 
 class Course(models.Model):
@@ -29,3 +30,24 @@ class Session(models.Model):
     instructor_id = fields.Many2one('openacademy.partner', string="Instructor")
     course_id = fields.Many2one('openacademy.course', ondelete='cascade', string="Course", required=True)
     attendee_ids = fields.Many2many('openacademy.partner', string="Attendees")
+
+    capacity = fields.Integer()
+    number_attendees = fields.Integer(compute="get_number_attendees", store=True)
+
+    _sql_constraints = [('check_num_capacity', 'CHECK(capacity>= number_attendees)', 'too much attendees for room capacity!SQL')]
+
+    @api.depends('attendee_ids')
+    def get_number_attendees(self):
+        for session in self:
+            session.number_attendees = len(session.attendee_ids)
+            #raise ValidationError ('Too much attendees for room capacity! python')
+
+    @api.constraints('number_attendees','capacity')
+    def _check_num_capacity(self):
+        for session in self:
+            if session number_attendees > session.capacity
+            raise ValidationError('too much attendees for room capacity! python')
+
+
+
+
