@@ -1,0 +1,117 @@
+<odoo>
+	<record id="course_tree_view" model="ir.ui.view">
+		<field name="name">course.tree.view</field>
+		<field name="model">openacademy.course</field>
+		<field name="arch" type="xml">
+			<tree>
+				<field name="name"/>
+				<field name="responsible_id"/>
+				<field name="level"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="session_tree_view" model="ir.ui.view">
+		<field name="name">session.tree.view</field>
+		<field name="model">openacademy.session</field>
+		<field name="arch" type="xml">
+			<tree>
+				<field name="name"/>
+				<field name="state"/>
+				<field name="start_date"/>
+				<field name="seats"/>
+				<field name="taken_seats" widget="progressbar"/>
+			</tree>
+		</field>
+	</record>
+
+
+	<record id="session_form_view" model="ir.ui.view">
+		<field name="name">session.form.view</field>
+		<field name="model">openacademy.session</field>
+		<field name="arch" type="xml">
+			<form>
+				<header>
+					<field name="state" widget="statusbar"/>
+				</header>
+				<sheet>
+					<h1>
+						<field name="name" required="1"/>
+					</h1>
+					<group name="time_group" string="Timing">
+						<field name="start_date"/>
+						<field name="duration" attrs="{'invisible': [('start_date','=',False)]}"/>
+					</group>
+					<group name="info_group" string="Information">
+						<field name="instructor_id"/>
+						<field name="course_id" requied="1"/>
+						<field name="seats"/>
+						<field name="taken_seats" widget="progressbar" attrs="{'invisible': [('seats','=',0)]}"/>
+					</group>
+					<notebook>
+						<page name="page_attendees" string="Attendees">
+							<field name="attendee_ids" domain="[('instructor','=',False)]">
+								<tree editable="bottom">
+									<field name="name"/>
+									<field name="instructor" readonly="1"/>
+								</tree>
+							</field>
+						</page>
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+<record id="course_form_view" model="ir.ui.view">
+		<field name="name">course.form.view</field>
+		<field name="model">openacademy.course</field>
+		<field name="arch" type="xml">
+			<form>
+				<header>
+					<field name="level" widget="statusbar"/>
+				</header>
+				<sheet>
+					<h1>
+						<field name="name"/>
+					</h1>
+					<group name="The group" string="The group">
+						<field name="responsible_id"/>
+					</group>
+					<notebook>
+						<page name="page_description" string="Description">
+							<field name="description"/>
+						</page>
+						<page name= "page_sessions" string="Sessions">
+							<field name="session_ids"/>
+						</page>
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+
+<record id="action_course" model="ir.actions.act_window">
+	<field name="name">Courses</field>
+	<field name="res_model">openacademy.course</field>
+	<field name="view_mode">tree,form</field>
+</record>
+
+<record id="action_session" model="ir.actions.act_window">
+	<field name="name">Sessions</field>
+	<field name="res_model">openacademy.session</field>
+	<field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="top_menu_openacademy" name="Openacademy" web_icon="openacademy,data/index.png"/>
+
+<menuitem id="course_menu_top" name="courses" parent="openacademy.top_menu_openacademy"/>
+
+<menuitem id="course_menu" name="courses" parent="openacademy.course_menu_top" action="action_course"/>
+
+<menuitem id="session_menu" name="session" parent="openacademy.course_menu_top" action="action_session"/>
+
+</odoo>
+
+
